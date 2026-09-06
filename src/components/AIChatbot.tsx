@@ -13,15 +13,26 @@ export const AIChatbot = () => {
     setInput('');
 
     try {
-      const res = await fetch('http://localhost:8000/api/chat', {
+      const chatHistory = messages.map(m => ({
+        role: m.sender === 'ai' ? 'assistant' : 'user',
+        content: m.text
+      }));
+      chatHistory.push({ role: 'user', content: currentInput });
+
+      const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: currentInput })
+        body: JSON.stringify({ messages: chatHistory })
       });
       const data = await res.json();
-      setMessages(prev => [...prev, { sender: 'ai', text: data.reply }]);
+      
+      if (res.ok && data.choices && data.choices.length > 0) {
+        setMessages(prev => [...prev, { sender: 'ai', text: data.choices[0].message.content }]);
+      } else {
+        setMessages(prev => [...prev, { sender: 'ai', text: data.error || "Xatolik yuz berdi. Backend ulanmagan." }]);
+      }
     } catch (e) {
-      setMessages(prev => [...prev, { sender: 'ai', text: "Xatolik yuz berdi. Backend ulanmagan." }]);
+      setMessages(prev => [...prev, { sender: 'ai', text: "Tarmoq xatosi. Vercel ulanishi tekshirilmoqda." }]);
     }
   };
 
