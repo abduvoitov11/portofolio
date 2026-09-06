@@ -1,0 +1,381 @@
+.play-page {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  background-color: #050510;
+  background-image: radial-gradient(circle at center, #1a1a3a 0%, #050510 100%);
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  touch-action: none;
+  --dino-color: #00ffcc;
+  --dino-bg: #050510;
+  --obs-color: #ff0055;
+  position: relative;
+}
+
+/* Glassmorphism Back Button */
+.back-link {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.1rem;
+  padding: 12px 24px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 200;
+  transition: all 0.3s ease;
+}
+
+.back-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 255, 204, 0.3);
+  transform: translateY(-2px);
+}
+
+.dino-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.dino-game-container {
+  position: relative;
+  width: 100%;
+  flex: 1; /* Take up all available space */
+  background: transparent;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.game-header {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  z-index: 150;
+}
+
+.game-header h1 {
+  display: none; /* Hide title to focus on game, or we can keep it */
+}
+
+/* Glassmorphism Score */
+.dino-score {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 10px 25px;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.dino-score span {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.dino-score strong {
+  font-size: 2rem;
+  color: #fff;
+  text-shadow: 0 0 10px #00ffcc;
+}
+
+/* Overlays */
+.glass-panel {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(5, 5, 16, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.start-overlay p {
+  font-size: 1.5rem;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  padding: 20px 40px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+.dino-over h2 {
+  font-size: 4rem;
+  color: #fff;
+  text-shadow: 0 0 20px #ff0055, 0 0 40px #ff0055;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+}
+
+/* Glassmorphism Play Button */
+.dino-over button {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  padding: 15px 40px;
+  font-size: 1.2rem;
+  font-weight: 500;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.dino-over button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #00ffcc;
+  box-shadow: 0 0 30px rgba(0, 255, 204, 0.4);
+  transform: translateY(-2px);
+}
+
+.ground {
+  position: absolute;
+  bottom: 20%;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #00ffcc;
+  box-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+  z-index: 5;
+}
+
+.ground-line {
+  width: 200%;
+  height: 100%;
+  background: repeating-linear-gradient(90deg, transparent, transparent 40px, #00ffcc 40px, #00ffcc 80px);
+  animation: scrollGround 0.5s linear infinite;
+  opacity: 0.5;
+}
+
+@keyframes scrollGround {
+  from { transform: translateX(0); }
+  to { transform: translateX(-80px); }
+}
+
+/* Adjusted Dino position to match ground */
+.dino {
+  position: absolute;
+  bottom: calc(20% + 2px);
+  left: 10vw;
+  width: 60px;
+  height: 65px;
+  z-index: 10;
+  will-change: transform;
+  transform-origin: bottom center;
+}
+
+.dino svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 10px var(--dino-color));
+}
+
+.obstacle {
+  position: absolute;
+  bottom: calc(20% + 2px);
+  left: 0;
+  width: 40px;
+  height: 65px;
+  z-index: 9;
+  will-change: transform;
+  transform: translateX(2000px);
+}
+
+.obstacle svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 15px var(--obs-color));
+}
+
+.game-instructions {
+  position: absolute;
+  bottom: 5%;
+  width: 100%;
+  text-align: center;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.5);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.scrolling-bg {
+  position: absolute;
+  top: 0; left: 0; width: 200%; height: 100%;
+  background-image: 
+    radial-gradient(1.5px 1.5px at 10% 20%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1.5px 1.5px at 30% 60%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 50% 40%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 70% 80%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2.5px 2.5px at 90% 30%, #fff, rgba(0,0,0,0));
+  background-size: 50% 50%;
+  animation: starScroll 25s linear infinite;
+  opacity: 0.4;
+}
+
+@keyframes starScroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (max-width: 768px) {
+  .dino {
+    width: 45px;
+    height: 50px;
+  }
+  .obstacle {
+    width: 30px;
+    height: 50px;
+  }
+  .back-link {
+    font-size: 0.9rem;
+    padding: 8px 16px;
+  }
+  .dino-score strong {
+    font-size: 1.5rem;
+  }
+  .dino-over h2 {
+    font-size: 2.5rem;
+  }
+  .start-overlay p {
+    font-size: 1rem;
+    padding: 15px 25px;
+  }
+}
+
+/* Realistic Running Animation (8-bit style) */
+@keyframes dinoRunBody {
+  0%, 49% { transform: translateY(0); }
+  50%, 100% { transform: translateY(-2px); }
+}
+
+@keyframes legUp {
+  0%, 49% { transform: translateY(0); }
+  50%, 100% { transform: translateY(-6px); }
+}
+
+.dino-run {
+  animation: dinoRunBody 0.2s infinite;
+}
+
+.dino-run .leg-front {
+  animation: legUp 0.2s infinite;
+}
+
+.dino-run .leg-back {
+  animation: legUp 0.2s infinite 0.1s; /* Offset by half duration */
+}
+
+/* Dynamic Obstacles */
+.obs-type-1 {
+  bottom: calc(20% + 2px) !important;
+  width: 40px !important;
+  height: 65px !important;
+}
+
+.obs-type-2 {
+  bottom: calc(20% + 2px) !important;
+  width: 25px !important;
+  height: 90px !important;
+}
+
+.obs-type-3 {
+  bottom: calc(20% + 75px) !important;
+  width: 50px !important;
+  height: 35px !important;
+}
+
+/* Change color based on type for variety */
+.obs-type-2 svg path {
+  fill: #ff00ff;
+}
+
+.obs-type-3 svg path {
+  fill: #ff9900;
+}
+
+/* Ducking SVG display logic */
+.dino-duck-svg {
+  display: none;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 10px var(--dino-color));
+}
+
+.dino-is-ducking .dino-stand {
+  display: none;
+}
+
+.dino-is-ducking .dino-duck-svg {
+  display: block;
+}
+
+/* Modify the physical dimensions of the container when ducking */
+.dino-is-ducking {
+  width: 80px !important;
+  height: 40px !important;
+  bottom: calc(20% + 2px) !important;
+}
+
+/* Adjust leg animation for ducking legs */
+.dino-is-ducking.dino-run .leg-front {
+  animation: legUpDuck 0.2s infinite;
+}
+
+.dino-is-ducking.dino-run .leg-back {
+  animation: legUpDuck 0.2s infinite 0.1s;
+}
+
+@keyframes legUpDuck {
+  0%, 49% { transform: translateY(0); }
+  50%, 100% { transform: translateY(-4px); }
+}
+
+/* Entry Animation */
+.play-page {
+  animation: warpIn 0.8s cubic-bezier(0.2, 1, 0.2, 1) forwards;
+}
+
+@keyframes warpIn {
+  0% { transform: scale(0.9) translateY(20px); opacity: 0; filter: blur(10px); }
+  100% { transform: scale(1) translateY(0); opacity: 1; filter: blur(0); }
+}
