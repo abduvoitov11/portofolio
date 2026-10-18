@@ -6,7 +6,8 @@ export default async function handler(req, res) {
     }
 
     const { messages } = req.body || {};
-    const apiKey = process.env.GROQ_API_KEY || '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';
+    // Use the active project key
+    const apiKey = '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';
 
     if (!apiKey) {
         return res.status(500).json({ error: 'Server configuration error: Missing API Key' });
@@ -38,13 +39,13 @@ export default async function handler(req, res) {
                     model,
                     messages: chatMessages,
                     temperature: 0.7,
-                    max_tokens: 300
+                    max_tokens: 800
                 })
             });
 
             const data = await response.json();
 
-            if (response.ok && data?.choices?.length > 0) {
+            if (response.ok && data?.choices?.[0]?.message?.content) {
                 return res.status(200).json(data);
             }
         } catch (error) {
