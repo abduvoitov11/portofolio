@@ -39,6 +39,18 @@ export const LoadingProvider = ({ children }: PropsWithChildren) => {
         }
       });
     }
+
+    // Master fallback: Never keep site stuck on loading for more than 4 seconds on any device
+    const masterFallback = setTimeout(() => {
+      setIsLoading(false);
+      import("../components/utils/initialFX").then((module) => {
+        if (module.initialFX) {
+          module.initialFX();
+        }
+      });
+    }, 4000);
+
+    return () => clearTimeout(masterFallback);
   }, []);
 
   useEffect(() => {}, [loading]);

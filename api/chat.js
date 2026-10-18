@@ -87,5 +87,26 @@ export default async function handler(req, res) {
         debugErrors.push({ dynamicDiscoveryError: e.message });
     }
 
-    return res.status(500).json({ error: 'All Groq models failed', attempts: debugErrors });
+    // Graceful fallback response if all external AI models are down
+    const userMsg = messages[messages.length - 1]?.content?.toLowerCase() || '';
+    let reply = "Salom! Men Torabek Abduvoitovning AI yordamchisiman. Torabek — AI Developer va Python dasturchisi. U Machine Learning, Telegram botlar va Full-Stack loyihalar yaratishga ixtisoslashgan. Bog'lanish: rgobzpe@gmail.com";
+
+    if (userMsg.includes('loyiha') || userMsg.includes('project') || userMsg.includes('ish')) {
+        reply = "Torabekning eng so'nggi yirik loyihasi — 'Kiloli OPTOM' (optom-six.vercel.app). Shuningdek u ko'plab AI botlar va Web ilovalar ustida ishlagan.";
+    } else if (userMsg.includes('aloqa') || userMsg.includes('kontakt') || userMsg.includes('boglanish') || userMsg.includes('email') || userMsg.includes('telegram')) {
+        reply = "Torabek bilan bog'lanish uchun: Email: rgobzpe@gmail.com yoki GitHub: https://github.com/abduvoitov11";
+    } else if (userMsg.includes('dino') || userMsg.includes('oyun') || userMsg.includes('o\'yin')) {
+        reply = "Saytda o'ynash uchun maxsus Cyber Dino o'yini mavjud! Bosh sahifadagi 'Dino o'ynash' tugmasini bosib o'ynashingiz mumkin.";
+    }
+
+    return res.status(200).json({
+        choices: [
+            {
+                message: {
+                    role: "assistant",
+                    content: reply
+                }
+            }
+        ]
+    });
 }

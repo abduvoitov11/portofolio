@@ -54,7 +54,18 @@ const Scene = () => {
       let progress = setProgress((value) => setLoading(value));
       const { loadCharacter } = setCharacter(camera);
 
+      // Failsafe timer: if character load takes longer than 2.8s, complete progress
+      let loadedCalled = false;
+      const callLoaded = () => {
+        if (!loadedCalled) {
+          loadedCalled = true;
+          progress.loaded();
+        }
+      };
+      const loadSafetyTimer = setTimeout(callLoaded, 2800);
+
       loadCharacter().then((gltf) => {
+        clearTimeout(loadSafetyTimer);
         if (gltf) {
           const animations = setAnimations(gltf);
           hoverDivRef.current && animations.hover(gltf, hoverDivRef.current);
@@ -64,20 +75,19 @@ const Scene = () => {
           scene.add(character);
           headBone = character.getObjectByName("spine006") || null;
           screenLight = character.getObjectByName("screenlight") || null;
-          progress.loaded().then(() => {
-            setTimeout(() => {
-              light.turnOnLights();
-              animations.startIntro();
-            }, 2500);
-          });
+          callLoaded();
+          setTimeout(() => {
+            light.turnOnLights();
+            animations.startIntro();
+          }, 1500);
           window.addEventListener("resize", () =>
             handleResize(renderer, camera, canvasDiv, character)
           );
         }
       }).catch((err) => {
+        clearTimeout(loadSafetyTimer);
         console.error("Character failed to load:", err);
-        // Force loading to finish anyway so site works
-        progress.loaded();
+        callLoaded();
       });
 
       let mouse = { x: 0, y: 0 },

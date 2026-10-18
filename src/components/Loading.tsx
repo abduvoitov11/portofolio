@@ -10,27 +10,55 @@ const Loading = ({ percent }: { percent: number }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [clicked, setClicked] = useState(false);
 
-  if (percent >= 100) {
+  const handleEnter = () => {
+    setClicked(true);
+    setLoaded(true);
+    setIsLoaded(true);
     setTimeout(() => {
-      setLoaded(true);
-      setTimeout(() => {
-        setIsLoaded(true);
-      }, 1000);
-    }, 600);
-  }
+      import("./utils/initialFX").then((module) => {
+        if (module.initialFX) {
+          module.initialFX();
+        }
+        setIsLoading(false);
+      });
+    }, 500);
+  };
+
+  // Safety fallback: Never keep user stuck for more than 3.5 seconds
+  useEffect(() => {
+    const safetyTimer = setTimeout(() => {
+      handleEnter();
+    }, 3500);
+
+    return () => clearTimeout(safetyTimer);
+  }, []);
 
   useEffect(() => {
-    import("./utils/initialFX").then((module) => {
-      if (isLoaded) {
-        setClicked(true);
-        setTimeout(() => {
+    if (percent >= 100) {
+      const t1 = setTimeout(() => {
+        setLoaded(true);
+        const t2 = setTimeout(() => {
+          setIsLoaded(true);
+        }, 800);
+        return () => clearTimeout(t2);
+      }, 400);
+      return () => clearTimeout(t1);
+    }
+  }, [percent]);
+
+  useEffect(() => {
+    if (isLoaded) {
+      setClicked(true);
+      const timer = setTimeout(() => {
+        import("./utils/initialFX").then((module) => {
           if (module.initialFX) {
             module.initialFX();
           }
           setIsLoading(false);
-        }, 900);
-      }
-    });
+        });
+      }, 700);
+      return () => clearTimeout(timer);
+    }
   }, [isLoaded]);
 
   function handleMouseMove(e: React.MouseEvent<HTMLElement>) {
@@ -69,6 +97,8 @@ const Loading = ({ percent }: { percent: number }) => {
         <div
           className={`loading-wrap ${clicked && "loading-clicked"}`}
           onMouseMove={(e) => handleMouseMove(e)}
+          onClick={handleEnter}
+          style={{ cursor: "pointer" }}
         >
           <div className="loading-hover"></div>
           <div className={`loading-button ${loaded && "loading-complete"}`}>
