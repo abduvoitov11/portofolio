@@ -34,7 +34,8 @@ h6 {
 }
 
 body {
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* Allow scrolling on mobile */
@@ -70,11 +71,19 @@ a:hover {
 
 main {
   opacity: 1 !important;
+  visibility: visible !important;
   transition: 0.3s;
 }
 
 .main-active {
   opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.main-body,
+.container-main {
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 @keyframes fadeIn {

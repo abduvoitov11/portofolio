@@ -1,9 +1,9 @@
-import { TextSplitter } from "../../utils/textSplitter";
 import gsap from "gsap";
 import { lenis } from "../Navbar";
 
 export function initialFX() {
   document.body.style.overflowY = "auto";
+  document.documentElement.style.overflowY = "auto";
   if (lenis) {
     lenis.start();
   }
@@ -11,6 +11,13 @@ export function initialFX() {
   if (mainEl) {
     mainEl.classList.add("main-active");
     mainEl.style.opacity = "1";
+    mainEl.style.visibility = "visible";
+  }
+
+  const landingContainer = document.querySelector(".landing-container") as HTMLElement;
+  if (landingContainer) {
+    landingContainer.style.opacity = "1";
+    landingContainer.style.visibility = "visible";
   }
 
   gsap.to("body", {
@@ -18,39 +25,22 @@ export function initialFX() {
     duration: 0.5,
   });
 
-  const selectors = [".landing-info h3", ".landing-intro h2", ".landing-intro h1", ".landing-h2-1"];
-  const elements = selectors.flatMap(selector => Array.from(document.querySelectorAll(selector)));
-  
   try {
-    const landingText = new TextSplitter(elements, {
-      type: "words,chars",
-      linesClass: "split-line",
+    gsap.from([".landing-intro", ".landing-info"], {
+      opacity: 0.3,
+      y: 20,
+      duration: 0.6,
+      stagger: 0.1,
+      ease: "power2.out",
     });
-    
-    if (landingText.chars.length > 0) {
-      gsap.fromTo(
-        landingText.chars,
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          duration: 0.8,
-          ease: "power3.out",
-          y: 0,
-          stagger: 0.02,
-          delay: 0.2,
-        }
-      );
-    }
   } catch (e) {
-    console.error("TextSplitter error:", e);
+    console.warn("GSAP landing animation skipped:", e);
   }
 
-  gsap.to(".landing-container", { opacity: 1, y: 0, duration: 0.5 });
   gsap.to([".header", ".icons-section", ".nav-fade", ".landing-info-h2"], {
     opacity: 1,
-    duration: 0.8,
+    duration: 0.5,
     ease: "power1.inOut",
-    delay: 0.1,
   });
 }
 

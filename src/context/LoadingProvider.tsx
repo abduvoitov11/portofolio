@@ -7,6 +7,8 @@ import {
 } from "react";
 import Loading from "../components/Loading";
 
+import { initialFX } from "../components/utils/initialFX";
+
 interface LoadingType {
   isLoading: boolean;
   setIsLoading: (state: boolean) => void;
@@ -31,24 +33,24 @@ export const LoadingProvider = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     // Auto-start animations on mobile since there's no 3D model
     if (window.innerWidth <= 768) {
-      import("../components/utils/initialFX").then((module) => {
-        if (module.initialFX) {
-          setTimeout(() => {
-            module.initialFX();
-          }, 100);
+      setTimeout(() => {
+        try {
+          initialFX();
+        } catch (e) {
+          console.warn("initialFX error:", e);
         }
-      });
+      }, 50);
     }
 
-    // Master fallback: Never keep site stuck on loading for more than 4 seconds on any device
+    // Master fallback: Never keep site stuck on loading for more than 2.5 seconds on any device
     const masterFallback = setTimeout(() => {
       setIsLoading(false);
-      import("../components/utils/initialFX").then((module) => {
-        if (module.initialFX) {
-          module.initialFX();
-        }
-      });
-    }, 4000);
+      try {
+        initialFX();
+      } catch (e) {
+        console.warn("initialFX error:", e);
+      }
+    }, 2500);
 
     return () => clearTimeout(masterFallback);
   }, []);

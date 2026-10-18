@@ -58,13 +58,14 @@
   align-items: center;
 }
 .loading-clicked {
-  transition-delay: 0ms;
-  transition-timing-function: cubic-bezier(0.33, 0.11, 1, 0.72);
-  transform: scale(1);
-  min-width: calc(100vw + 5000px);
-  border-radius: 5000px;
-  min-height: calc(100vh + 500px);
-  box-shadow: none;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.5s ease-out !important;
+}
+.loading-screen.loading-fade-out {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.5s ease-out !important;
 }
 .loading-clicked .loading-button {
   overflow: visible;

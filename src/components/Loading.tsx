@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./styles/Loading.css";
 import { useLoading } from "../context/LoadingProvider";
+import { initialFX } from "./utils/initialFX";
 
 import Marquee from "react-fast-marquee";
 
@@ -15,20 +16,20 @@ const Loading = ({ percent }: { percent: number }) => {
     setLoaded(true);
     setIsLoaded(true);
     setTimeout(() => {
-      import("./utils/initialFX").then((module) => {
-        if (module.initialFX) {
-          module.initialFX();
-        }
-        setIsLoading(false);
-      });
-    }, 500);
+      try {
+        initialFX();
+      } catch (err) {
+        console.warn("initialFX error:", err);
+      }
+      setIsLoading(false);
+    }, 400);
   };
 
-  // Safety fallback: Never keep user stuck for more than 3.5 seconds
+  // Safety fallback: Never keep user stuck for more than 2.5 seconds
   useEffect(() => {
     const safetyTimer = setTimeout(() => {
       handleEnter();
-    }, 3500);
+    }, 2500);
 
     return () => clearTimeout(safetyTimer);
   }, []);
@@ -39,9 +40,9 @@ const Loading = ({ percent }: { percent: number }) => {
         setLoaded(true);
         const t2 = setTimeout(() => {
           setIsLoaded(true);
-        }, 800);
+        }, 500);
         return () => clearTimeout(t2);
-      }, 400);
+      }, 200);
       return () => clearTimeout(t1);
     }
   }, [percent]);
@@ -50,13 +51,13 @@ const Loading = ({ percent }: { percent: number }) => {
     if (isLoaded) {
       setClicked(true);
       const timer = setTimeout(() => {
-        import("./utils/initialFX").then((module) => {
-          if (module.initialFX) {
-            module.initialFX();
-          }
-          setIsLoading(false);
-        });
-      }, 700);
+        try {
+          initialFX();
+        } catch (err) {
+          console.warn("initialFX error:", err);
+        }
+        setIsLoading(false);
+      }, 400);
       return () => clearTimeout(timer);
     }
   }, [isLoaded]);

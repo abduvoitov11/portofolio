@@ -27,16 +27,25 @@ const Scene = () => {
       const aspect = container.width / container.height;
       const scene = sceneRef.current;
 
-      const renderer = new THREE.WebGLRenderer({
-        alpha: true,
-        antialias: window.devicePixelRatio < 2,
-        powerPreference: "high-performance",
-      });
-      renderer.setSize(container.width, container.height);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1;
-      canvasDiv.current.appendChild(renderer.domElement);
+      let renderer: THREE.WebGLRenderer;
+      try {
+        renderer = new THREE.WebGLRenderer({
+          alpha: true,
+          antialias: window.devicePixelRatio < 2,
+          powerPreference: "high-performance",
+        });
+        renderer.setClearColor(0x000000, 0);
+        renderer.setSize(container.width, container.height);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1;
+        renderer.domElement.style.pointerEvents = "none";
+        canvasDiv.current.appendChild(renderer.domElement);
+      } catch (e) {
+        console.warn("WebGL not supported or initialization failed:", e);
+        setLoading(100);
+        return;
+      }
 
       const camera = new THREE.PerspectiveCamera(14.5, aspect, 0.1, 1000);
       camera.position.z = 10;
