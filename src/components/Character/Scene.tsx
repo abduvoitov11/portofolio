@@ -49,8 +49,13 @@ const Scene = () => {
 
       const camera = new THREE.PerspectiveCamera(14.5, aspect, 0.1, 1000);
       camera.position.z = 10;
-      camera.position.set(0, 13.1, 24.7);
-      camera.zoom = 1.1;
+      if (window.innerWidth <= 768) {
+        camera.position.set(0, 11.2, 26);
+        camera.zoom = 0.95;
+      } else {
+        camera.position.set(0, 13.1, 24.7);
+        camera.zoom = 1.1;
+      }
       camera.updateProjectionMatrix();
 
       let headBone: THREE.Object3D | null = null;
@@ -88,7 +93,7 @@ const Scene = () => {
           setTimeout(() => {
             light.turnOnLights();
             animations.startIntro();
-          }, 1500);
+          }, 200);
           window.addEventListener("resize", () =>
             handleResize(renderer, camera, canvasDiv, character)
           );

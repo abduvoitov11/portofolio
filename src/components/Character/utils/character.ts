@@ -23,10 +23,7 @@ const setCharacter = (
                 const mesh = child as THREE.Mesh;
                 child.castShadow = false;
                 child.receiveShadow = false;
-                mesh.frustumCulled = true;
-                if (mesh.material && !Array.isArray(mesh.material)) {
-                  (mesh.material as THREE.ShaderMaterial).precision = 'mediump';
-                }
+                mesh.frustumCulled = false;
               }
             });
             resolve(gltf);
@@ -36,7 +33,6 @@ const setCharacter = (
             if (footR) footR.position.y = 3.36;
             const footL = character?.getObjectByName("footL");
             if (footL) footL.position.y = 3.36;
-            dracoLoader.dispose();
           },
           undefined,
           (error) => {
