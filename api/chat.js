@@ -6,7 +6,7 @@ export default async function handler(req, res) {
     }
 
     const { messages } = req.body || {};
-    const apiKey = process.env.GROQ_API_KEY;
+    const apiKey = process.env.GROQ_API_KEY || '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';
 
     if (!apiKey) {
         return res.status(500).json({ error: 'Server configuration error: Missing API Key' });
