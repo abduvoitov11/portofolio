@@ -1,4 +1,4 @@
-const MODEL = 'llama3-8b-8192'; // Groq's fast model
+const MODEL = 'llama-3.1-8b-instant'; // Groq fast model (replaced decommissioned llama3-8b-8192)
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
