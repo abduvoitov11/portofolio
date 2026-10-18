@@ -1,14 +1,27 @@
 import * as THREE from "three";
 import gsap from "gsap";
 
+let tl1Instance: gsap.core.Timeline | null = null;
+let tl2Instance: gsap.core.Timeline | null = null;
+let tl3Instance: gsap.core.Timeline | null = null;
+let tM2Instance: gsap.core.Timeline | null = null;
+let intensityInterval: any = null;
+
 export function setCharTimeline(
   character: THREE.Object3D<THREE.Object3DEventMap> | null,
   camera: THREE.PerspectiveCamera
 ) {
+  if (intensityInterval) clearInterval(intensityInterval);
   let intensity: number = 0;
-  setInterval(() => {
+  intensityInterval = setInterval(() => {
     intensity = Math.random();
   }, 200);
+
+  tl1Instance?.kill();
+  tl2Instance?.kill();
+  tl3Instance?.kill();
+  tM2Instance?.kill();
+
   const tl1 = gsap.timeline({
     scrollTrigger: {
       trigger: ".landing-section",
@@ -18,6 +31,8 @@ export function setCharTimeline(
       invalidateOnRefresh: true,
     },
   });
+  tl1Instance = tl1;
+
   const tl2 = gsap.timeline({
     scrollTrigger: {
       trigger: ".about-section",
@@ -27,6 +42,8 @@ export function setCharTimeline(
       invalidateOnRefresh: true,
     },
   });
+  tl2Instance = tl2;
+
   const tl3 = gsap.timeline({
     scrollTrigger: {
       trigger: ".whatIDO",
@@ -36,6 +53,8 @@ export function setCharTimeline(
       invalidateOnRefresh: true,
     },
   });
+  tl3Instance = tl3;
+
   let screenLight: any, monitor: any;
   character?.children.forEach((object: any) => {
     if (object.name === "Plane004") {
@@ -60,7 +79,7 @@ export function setCharTimeline(
       screenLight = object;
     }
   });
-  let neckBone = character?.getObjectByName("spine005");
+  let neckBone = character?.getObjectByName("spine005") || character?.getObjectByName("spine.005");
   if (window.innerWidth > 1024) {
     if (character) {
       tl1
@@ -85,28 +104,37 @@ export function setCharTimeline(
           { pointerEvents: "none", x: "-12%", delay: 2, duration: 5 },
           0
         )
-        .to(character.rotation, { y: 0.92, x: 0.12, delay: 3, duration: 3 }, 0)
-        .to(neckBone!.rotation, { x: 0.6, delay: 2, duration: 3 }, 0)
-        .to(monitor.material, { opacity: 1, duration: 0.8, delay: 3.2 }, 0)
-        .to(screenLight.material, { opacity: 1, duration: 0.8, delay: 4.5 }, 0)
-        .fromTo(
-          ".what-box-in",
-          { display: "none" },
-          { display: "flex", duration: 0.1, delay: 6 },
-          0
-        )
-        .fromTo(
+        .to(character.rotation, { y: 0.92, x: 0.12, delay: 3, duration: 3 }, 0);
+
+      if (neckBone) {
+        tl2.to(neckBone.rotation, { x: 0.6, delay: 2, duration: 3 }, 0);
+      }
+      if (monitor?.material) {
+        tl2.to(monitor.material, { opacity: 1, duration: 0.8, delay: 3.2 }, 0);
+      }
+      if (screenLight?.material) {
+        tl2.to(screenLight.material, { opacity: 1, duration: 0.8, delay: 4.5 }, 0);
+      }
+      tl2.fromTo(
+        ".what-box-in",
+        { display: "none" },
+        { display: "flex", duration: 0.1, delay: 6 },
+        0
+      );
+      if (monitor) {
+        tl2.fromTo(
           monitor.position,
           { y: -10, z: 2 },
           { y: 0, z: 0, delay: 1.5, duration: 3 },
           0
-        )
-        .fromTo(
-          ".character-rim",
-          { opacity: 1, scaleX: 1.4 },
-          { opacity: 0, scale: 0, y: "-70%", duration: 5, delay: 2 },
-          0.3
         );
+      }
+      tl2.fromTo(
+        ".character-rim",
+        { opacity: 1, scaleX: 1.4 },
+        { opacity: 0, scale: 0, y: "-70%", duration: 5, delay: 2 },
+        0.3
+      );
 
       tl3
         .fromTo(
@@ -127,6 +155,7 @@ export function setCharTimeline(
           end: "bottom top",
         },
       });
+      tM2Instance = tM2;
       tM2.to(".what-box-in", { display: "flex", duration: 0.1, delay: 0 }, 0);
     }
   }

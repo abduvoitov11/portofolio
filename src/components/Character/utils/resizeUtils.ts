@@ -1,17 +1,16 @@
 import * as THREE from "three";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { setCharTimeline, setAllTimeline } from "../../utils/GsapScroll";
+import { setCharTimeline } from "../../utils/GsapScroll";
 
 export default function handleResize(
   renderer: THREE.WebGLRenderer,
   camera: THREE.PerspectiveCamera,
   canvasDiv: React.RefObject<HTMLDivElement>,
-  character: THREE.Object3D
+  character: THREE.Object3D | null
 ) {
   if (!canvasDiv.current) return;
   let canvas3d = canvasDiv.current.getBoundingClientRect();
-  const width = canvas3d.width;
-  const height = canvas3d.height;
+  const width = canvas3d.width > 0 ? canvas3d.width : window.innerWidth;
+  const height = canvas3d.height > 0 ? canvas3d.height : window.innerHeight;
   renderer.setSize(width, height);
   camera.aspect = width / height;
   if (window.innerWidth <= 768) {
@@ -22,12 +21,7 @@ export default function handleResize(
     camera.zoom = 1.1;
   }
   camera.updateProjectionMatrix();
-  const workTrigger = ScrollTrigger.getById("work");
-  ScrollTrigger.getAll().forEach((trigger) => {
-    if (trigger != workTrigger) {
-      trigger.kill();
-    }
-  });
-  setCharTimeline(character, camera);
-  setAllTimeline();
+  if (character) {
+    setCharTimeline(character, camera);
+  }
 }

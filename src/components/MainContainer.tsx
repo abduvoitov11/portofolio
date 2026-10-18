@@ -1,4 +1,4 @@
-import { PropsWithChildren, useEffect, useState } from "react";
+import { PropsWithChildren, useEffect } from "react";
 import About from "./About";
 import Career from "./Career";
 import Contact from "./Contact";
@@ -13,8 +13,6 @@ import CallToAction from "./CallToAction";
 import setSplitText from "./utils/splitText";
 
 const MainContainer = ({ children }: PropsWithChildren) => {
-  const [shouldRenderCharacter, setShouldRenderCharacter] = useState(true);
-
   useEffect(() => {
     const resizeHandler = () => {
       setSplitText();
@@ -26,48 +24,20 @@ const MainContainer = ({ children }: PropsWithChildren) => {
     };
   }, []);
 
-  useEffect(() => {
-    let timeoutId: ReturnType<typeof setTimeout> | undefined;
-    let idleId: number | undefined;
-    const win = window as Window & {
-      requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number;
-      cancelIdleCallback?: (handle: number) => void;
-    };
-
-    const mountCharacter = () => setShouldRenderCharacter(true);
-
-    if (typeof win.requestIdleCallback === "function") {
-      idleId = win.requestIdleCallback(mountCharacter, { timeout: 1500 });
-    } else {
-      timeoutId = setTimeout(mountCharacter, 1200);
-    }
-
-    return () => {
-      if (idleId !== undefined && typeof win.cancelIdleCallback === "function") {
-        win.cancelIdleCallback(idleId);
-      }
-      if (timeoutId !== undefined) {
-        clearTimeout(timeoutId);
-      }
-    };
-  }, []);
-
   return (
     <div className="container-main">
       <Cursor />
       <Navbar />
       <SocialIcons />
-      {shouldRenderCharacter && children}
-      <div className="container-main">
-        <Landing />
-        <About />
-        <WhatIDo />
-        <Career />
-        <Work />
-        <TechStackNew />
-        <CallToAction />
-        <Contact />
-      </div>
+      {children}
+      <Landing />
+      <About />
+      <WhatIDo />
+      <Career />
+      <Work />
+      <TechStackNew />
+      <CallToAction />
+      <Contact />
     </div>
   );
 };

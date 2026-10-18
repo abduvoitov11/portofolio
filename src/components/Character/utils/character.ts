@@ -19,10 +19,11 @@ const setCharacter = (
           async (gltf) => {
             character = gltf.scene;
             character.traverse((child: any) => {
+              child.frustumCulled = false;
               if (child.isMesh) {
                 const mesh = child as THREE.Mesh;
-                child.castShadow = false;
-                child.receiveShadow = false;
+                mesh.castShadow = false;
+                mesh.receiveShadow = false;
                 mesh.frustumCulled = false;
               }
             });
