@@ -15,6 +15,16 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Messages must be a non-empty array' });
     }
 
+    const systemPrompt = {
+        role: "system",
+        content: "Sen Torabek Abduvoitovning (AI Developer, Python mutaxassisi) rasmiy portfoliodagi aqlli AI yordamchisisan. Foydalanuvchilarga do'stona, aniq va chiroyli o'zbek tilida javob ber. Torabekning asosiy loyihasi - 'Kiloli OPTOM' (optom-six.vercel.app). U Machine Learning, AI modellar, Telegram botlar va Full-Stack loyihalar yaratishga ixtisoslashgan. Bog'lanish uchun: Email: rgobzpe@gmail.com, GitHub: https://github.com/abduvoitov11."
+    };
+
+    let chatMessages = [...messages];
+    if (chatMessages[0]?.role !== 'system') {
+        chatMessages.unshift(systemPrompt);
+    }
+
     // Try primary models
     for (const model of MODELS) {
         try {
@@ -26,7 +36,7 @@ export default async function handler(req, res) {
                 },
                 body: JSON.stringify({
                     model,
-                    messages,
+                    messages: chatMessages,
                     temperature: 0.7,
                     max_tokens: 300
                 })
