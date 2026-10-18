@@ -1,4 +1,4 @@
-const MODELS = ['openai/gpt-oss-20b', 'openai/gpt-oss-120b', 'llama-3.3-70b-versatile', 'llama-3.1-8b-instant'];
+const MODELS = ['qwen/qwen3.8-27b', 'allam-2-7b', 'openai/gpt-oss-20b'];
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
@@ -15,9 +15,7 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Messages must be a non-empty array' });
     }
 
-    const debugErrors = [];
-    
-    // First try standard high quality models
+    // Try primary models
     for (const model of MODELS) {
         try {
             const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -39,9 +37,8 @@ export default async function handler(req, res) {
             if (response.ok && data?.choices?.length > 0) {
                 return res.status(200).json(data);
             }
-            debugErrors.push({ model, status: response.status, error: data?.error?.message || data?.error });
         } catch (error) {
-            debugErrors.push({ model, error: error.message });
+            // continue to fallback
         }
     }
 
@@ -77,14 +74,9 @@ export default async function handler(req, res) {
                     return res.status(200).json(data);
                 }
             }
-            return res.status(500).json({ 
-                error: 'No active Groq chat model worked', 
-                availableModels, 
-                debugErrors 
-            });
         }
     } catch (e) {
-        debugErrors.push({ dynamicDiscoveryError: e.message });
+        // fallback
     }
 
     // Graceful fallback response if all external AI models are down
